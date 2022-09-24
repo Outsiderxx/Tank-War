@@ -5,18 +5,20 @@ using UnityEngine;
 
 public class TankController : MonoBehaviour
 {
-    Transform gun;
-    Transform turrent;
-    List<WheelCollider> wheels = new List<WheelCollider>();
-    List<Transform> wheelMeshes = new List<Transform>();
+    public GameObjectPool bombPool;
+    private Transform turrent;
+    private Transform gun;
+    private Transform bombSpawnAt;
+    private List<WheelCollider> wheels = new List<WheelCollider>();
+    private List<Transform> wheelMeshes = new List<Transform>();
 
-    public float force = 10000, rotateSensitivity = 0.5f;
-    public float moveSpeed;
+    [SerializeField] private float wheelForce = 10000, rotateSensitivity = 0.5f, bombForce = 100;
 
     private void Awake()
     {
         this.turrent = this.transform.Find("Turret");
         this.gun = this.turrent.Find("Gun");
+        this.bombSpawnAt = this.gun.Find("Barrel").Find("BombSpawnAt");
         foreach (Transform wheel in this.transform.Find("WheelColliders"))
         {
             this.wheels.Add(wheel.GetComponent<WheelCollider>());
@@ -27,13 +29,18 @@ public class TankController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     private void Update()
     {
-        // direction of turret do not affect by the direction of tank
-        float oldAngle = this.transform.eulerAngles.y;
-        this.transform.eulerAngles = new Vector3(0, (this.transform.eulerAngles.y + Input.GetAxis("Horizontal") * this.rotateSensitivity) % 360, 0);
-        // this.turrent.eulerAngles = new Vector3(this.turrent.transform.eulerAngles.x, oldAngle - this.transform.eulerAngles.y, this.turrent.transform.eulerAngles.z);
+        // rotate tank orientation
+        Vector3 newEulerAngles = Vector3.zero;
+        newEulerAngles.y = (this.transform.eulerAngles.y + Input.GetAxis("Horizontal") * this.rotateSensitivity) % 360;
+        this.transform.eulerAngles = newEulerAngles;
+
+        // fire bomb
+        if (Input.GetMouseButtonUp(0))
+        {
+            this.FireBomb();
+        }
     }
 
     private void FixedUpdate()
@@ -47,7 +54,14 @@ public class TankController : MonoBehaviour
 
         this.wheels.ForEach((wheel) =>
         {
-            wheel.motorTorque = Input.GetAxis("Vertical") * this.force * Time.fixedDeltaTime;
+            wheel.motorTorque = Input.GetAxis("Vertical") * this.wheelForce * Time.fixedDeltaTime;
         });
+    }
+
+    private void FireBomb()
+    {
+        GameObject bomb = this.bombPool.Get();
+        bomb.transform.position = this.bombSpawnAt.position;
+        bomb.GetComponent<Rigidbody>().AddForce(this.bombSpawnAt.forward * this.bombForce);
     }
 }
