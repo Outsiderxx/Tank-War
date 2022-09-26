@@ -47,7 +47,5 @@ public class SkyBoxController : MonoBehaviour
             RenderSettings.ambientIntensity = (this.currentValue - this.nightValue) / (this.dayValue - this.nightValue);
             this.skyBox.SetColor("_Tint", new Color(this.currentValue, this.currentValue, this.currentValue, 1));
         }
-
-        print(RenderSettings.ambientIntensity);
     }
 }
