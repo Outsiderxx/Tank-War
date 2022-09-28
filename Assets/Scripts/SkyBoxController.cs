@@ -8,17 +8,22 @@ public class SkyBoxController : MonoBehaviour
     public float rotationSpeed, timeChangeSpeed, nightValue, dayValue;
     public bool isNight;
 
+    public static SkyBoxController instance { get; private set; }
     private Material skyBox;
     private float currentValue;
     private int jobID;
 
+    public System.Action onTimeStateChanged;
+
     private void Awake()
     {
+        SkyBoxController.instance = this;
         this.skyBox = RenderSettings.skybox;
         this.currentValue = this.skyBox.GetColor("_Tint").r;
         this.jobID = Scheduler.Schedule(() =>
         {
             this.isNight = !this.isNight;
+            this.onTimeStateChanged?.Invoke();
         }, this.timeInterval);
     }
 
