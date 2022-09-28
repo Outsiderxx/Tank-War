@@ -39,9 +39,12 @@ public class Bomb : MonoBehaviour
         }
         this.isCollided = true;
         this.Explosion.Play();
+        AudioManager.Instance.Play3DEffect("Explosion", this.transform.position);
         this.Rigidbody.detectCollisions = false;
         this.Rigidbody.useGravity = false;
         this.Rigidbody.velocity = Vector3.zero;
+        this.Trail.Clear();
+        this.Trail.enabled = false;
         this.Body.SetActive(false);
         Collider[] colliders = Physics.OverlapSphere(this.transform.position, this.damageRadius);
         colliders.ToList().ForEach(collider =>

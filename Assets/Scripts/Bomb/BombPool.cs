@@ -36,7 +36,7 @@ public class BombPool : GameObjectPool
         }
         base.Unuse(gameObject);
 
-        bomb.Trail.Clear();
+        bomb.Trail.enabled = true;
         bomb.Rigidbody.detectCollisions = true;
         bomb.Rigidbody.useGravity = true;
     }

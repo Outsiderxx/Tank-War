@@ -4,6 +4,7 @@ using System.Linq;
 
 public class PlayerTankController : TankController
 {
+    [SerializeField] private GameController gameController;
     [SerializeField] private Text leftBombCount;
     [SerializeField] private Text taskMessage;
     [SerializeField] private Slider taskProgress;
@@ -24,7 +25,6 @@ public class PlayerTankController : TankController
 
     void Update()
     {
-        this.aimPoint.SetActive(Input.GetMouseButton(1));
         this.tank.UpdateTurretRotateAngleRatio(Input.GetAxis("Mouse X"));
         this.tank.UpdateGunRaiseAngleRatio(Input.GetAxis("Mouse Y"));
         if (Input.GetKeyUp(KeyCode.Q))
@@ -32,12 +32,14 @@ public class PlayerTankController : TankController
             this.tank.ToggleHeadLight();
         }
 
-        if (this.tank.isAlive && Input.GetMouseButton(1))
+        if (!this.gameController.isPause && this.tank.isAlive && Input.GetMouseButton(1))
         {
+            this.aimPoint.SetActive(true);
             this.cameraSwitcher.DisplayInFirstPerson();
         }
         else
         {
+            this.aimPoint.SetActive(false);
             this.cameraSwitcher.DisplayInThirdPerson();
         }
 
@@ -46,7 +48,7 @@ public class PlayerTankController : TankController
             this.DecideAction(this.GetSurroundingBrokenTank());
 
             // fire bomb
-            if (Input.GetMouseButtonUp(0))
+            if (!this.gameController.isPause && Input.GetMouseButtonUp(0))
             {
                 this.tank.FireBomb();
             }

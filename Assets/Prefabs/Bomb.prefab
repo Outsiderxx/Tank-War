@@ -274,12 +274,32 @@ PrefabInstance:
     m_TransformParent: {fileID: 8314051203684234837}
     m_Modifications:
     - target: {fileID: 5493546615458341885, guid: cdc1c4eeba2e52445b658669b61d591c, type: 3}
+      propertyPath: OnStop.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493546615458341885, guid: cdc1c4eeba2e52445b658669b61d591c, type: 3}
+      propertyPath: OnStop.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493546615458341885, guid: cdc1c4eeba2e52445b658669b61d591c, type: 3}
       propertyPath: OnStop.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 3184592556466578958}
     - target: {fileID: 5493546615458341885, guid: cdc1c4eeba2e52445b658669b61d591c, type: 3}
+      propertyPath: OnStop.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493546615458341885, guid: cdc1c4eeba2e52445b658669b61d591c, type: 3}
       propertyPath: OnStop.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnExplodeEnd
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493546615458341885, guid: cdc1c4eeba2e52445b658669b61d591c, type: 3}
+      propertyPath: OnStop.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Bomb, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5493546615458341885, guid: cdc1c4eeba2e52445b658669b61d591c, type: 3}
+      propertyPath: OnStop.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6185294719990935776, guid: cdc1c4eeba2e52445b658669b61d591c, type: 3}
       propertyPath: looping

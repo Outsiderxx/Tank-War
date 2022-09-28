@@ -15,11 +15,15 @@ public class Tank : MonoBehaviour
     [SerializeField] private GameObjectPool bombPool;
     [SerializeField] private Slider healthPointBar;
     [SerializeField] private Light[] headLights;
+    [SerializeField] private ParticleSystem[] dusts;
     public Transform turret { get; private set; }
     public Transform gun { get; private set; }
     private Transform bombSpawnAt;
+    private Rigidbody body;
     private List<WheelCollider> wheels = new List<WheelCollider>();
     private List<Transform> wheelMeshes = new List<Transform>();
+    private AudioSource firingSound;
+    private AudioSource moveSound;
 
     // setting
     public float reloadDuration = 3;
@@ -92,8 +96,11 @@ public class Tank : MonoBehaviour
 
     private void Awake()
     {
+        this.body = this.GetComponent<Rigidbody>();
         this.turret = this.transform.Find("Turret");
         this.gun = this.turret.Find("Gun");
+        this.firingSound = this.gun.GetComponent<AudioSource>();
+        this.moveSound = this.GetComponent<AudioSource>();
         this.bombSpawnAt = this.gun.Find("Barrel").Find("BombSpawnAt");
         foreach (Transform wheel in this.transform.Find("WheelColliders"))
         {
@@ -136,6 +143,23 @@ public class Tank : MonoBehaviour
             if (this.reloadLeftTime == 0)
             {
                 this.currentBombCount = this.maxBombCount;
+            }
+        }
+
+        if (!this.moveSound.isPlaying && this.body.velocity.sqrMagnitude >= 0.5)
+        {
+            this.moveSound.Play();
+            foreach (ParticleSystem dust in this.dusts)
+            {
+                dust.Play();
+            }
+        }
+        else if (this.body.velocity.sqrMagnitude < 0.5)
+        {
+            this.moveSound.Pause();
+            foreach (ParticleSystem dust in this.dusts)
+            {
+                dust.Stop();
             }
         }
     }
@@ -214,6 +238,7 @@ public class Tank : MonoBehaviour
         this.currentCooldown = this.maxCooldown;
         this.bombPool.Get().GetComponent<Bomb>().Fire(this, this.bombSpawnAt.position, this.bombSpawnAt.forward * this.bombForce);
         this.currentBombCount--;
+        this.firingSound.Play();
     }
 
     public void ReloadBomb()
@@ -260,6 +285,10 @@ public class Tank : MonoBehaviour
     private void Break()
     {
         this.state = this.hasBrokenBefore ? TankState.Dead : TankState.Broken;
+        if (!this.hasBrokenBefore)
+        {
+            this.hasBrokenBefore = true;
+        }
         this.GetComponent<Rigidbody>().velocity = Vector3.zero;
         this.moveSpeedRatio = 0;
         this.rotateAngleRatio = 0;

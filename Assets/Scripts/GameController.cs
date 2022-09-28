@@ -38,6 +38,14 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public bool isPause
+    {
+        get
+        {
+            return this.menu.IsOpen || this.resultPage.isOpen;
+        }
+    }
+
     public void BackToMainPage()
     {
         SceneManager.LoadScene("Main");

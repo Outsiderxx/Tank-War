@@ -11,6 +11,14 @@ public class ResultPage : MonoBehaviour
 
     private Page page;
 
+    public bool isOpen
+    {
+        get
+        {
+            return this.page.IsOpen;
+        }
+    }
+
     private void Awake()
     {
         this.page = this.GetComponent<Page>();
