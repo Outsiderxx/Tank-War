@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.14880362, g: 0.18544978, b: 0.24499735, a: 1}
+  m_IndirectSpecularColor: {r: 0.4645329, g: 0.5688736, b: 0.74321556, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1758,21 +1758,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99a322a8392fe7445b4ebeade845dd8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reloadDuration: 3
   bombPool: {fileID: 1001378783}
   healthPointBar: {fileID: 1431354908}
   headLights:
   - {fileID: 1169649250}
   - {fileID: 549648648}
+  reloadDuration: 3
   maxCooldown: 0.3
   maxBombCount: 10
   maxHealthPoint: 100
   bombForce: 5000
-  wheelForce: 10000
-  rotateSensitivity: 0.1
-  turretRotateSensitivity: 0.5
-  turret: {fileID: 0}
-  gun: {fileID: 0}
+  wheelForcePerSecond: 10000
+  rotateAnglePerSecond: 90
+  turretRotateAnglePerSecond: 150
+  gunRaiseAnglePerSecond: 150
 --- !u!54 &186336907
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5363,21 +5362,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99a322a8392fe7445b4ebeade845dd8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reloadDuration: 3
   bombPool: {fileID: 1001378783}
   healthPointBar: {fileID: 544318564}
   headLights:
   - {fileID: 1850699583}
   - {fileID: 1956216966}
+  reloadDuration: 3
   maxCooldown: 0.3
   maxBombCount: 10
   maxHealthPoint: 100
   bombForce: 5000
-  wheelForce: 10000
-  rotateSensitivity: 0.1
-  turretRotateSensitivity: 0.5
-  turret: {fileID: 0}
-  gun: {fileID: 0}
+  wheelForcePerSecond: 10000
+  rotateAnglePerSecond: 90
+  turretRotateAnglePerSecond: 150
+  gunRaiseAnglePerSecond: 150
 --- !u!54 &499828903
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11352,8 +11350,8 @@ MonoBehaviour:
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
-  m_HorizontalDamping: 0.5
-  m_VerticalDamping: 0.5
+  m_HorizontalDamping: 0
+  m_VerticalDamping: 0
   m_ScreenX: 0.5
   m_ScreenY: 0.5
   m_DeadZoneWidth: 0
@@ -11948,9 +11946,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Back
-
-'
+  m_Text: Back
 --- !u!222 &906363730
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -18016,21 +18012,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99a322a8392fe7445b4ebeade845dd8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reloadDuration: 3
   bombPool: {fileID: 1001378783}
   healthPointBar: {fileID: 1815294808}
   headLights:
   - {fileID: 280612989}
   - {fileID: 2126427938}
+  reloadDuration: 3
   maxCooldown: 0.3
   maxBombCount: 10
   maxHealthPoint: 100
   bombForce: 5000
-  wheelForce: 10000
-  rotateSensitivity: 0.1
-  turretRotateSensitivity: 0.5
-  turret: {fileID: 0}
-  gun: {fileID: 0}
+  wheelForcePerSecond: 10000
+  rotateAnglePerSecond: 90
+  turretRotateAnglePerSecond: 150
+  gunRaiseAnglePerSecond: 150
 --- !u!114 &1412520807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18851,7 +18846,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -20484,8 +20479,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1636468069}
-  m_LocalRotation: {x: 0.05829725, y: 0.9055091, z: 0.13232595, w: -0.3989293}
-  m_LocalPosition: {x: 237.56995, y: -5.359999, z: 221.06248}
+  m_LocalRotation: {x: 0.055416513, y: 0.9293876, z: 0.15419918, w: -0.33074215}
+  m_LocalPosition: {x: 840.6393, y: -6.1450977, z: 879.95}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -22516,21 +22511,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99a322a8392fe7445b4ebeade845dd8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reloadDuration: 3
   bombPool: {fileID: 1001378783}
   healthPointBar: {fileID: 1641409408}
   headLights:
   - {fileID: 1191240560}
   - {fileID: 519673944}
+  reloadDuration: 3
   maxCooldown: 0.3
   maxBombCount: 10
   maxHealthPoint: 100
   bombForce: 5000
-  wheelForce: 10000
-  rotateSensitivity: 0.1
-  turretRotateSensitivity: 0.5
-  turret: {fileID: 0}
-  gun: {fileID: 0}
+  wheelForcePerSecond: 10000
+  rotateAnglePerSecond: 90
+  turretRotateAnglePerSecond: 150
+  gunRaiseAnglePerSecond: 150
 --- !u!54 &1812472375
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -24759,21 +24753,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99a322a8392fe7445b4ebeade845dd8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reloadDuration: 3
   bombPool: {fileID: 1001378783}
   healthPointBar: {fileID: 1804777488}
   headLights:
   - {fileID: 591215066}
   - {fileID: 841639032}
+  reloadDuration: 3
   maxCooldown: 0.3
   maxBombCount: 10
   maxHealthPoint: 100
   bombForce: 5000
-  wheelForce: 10000
-  rotateSensitivity: 0.1
-  turretRotateSensitivity: 0.5
-  turret: {fileID: 0}
-  gun: {fileID: 0}
+  wheelForcePerSecond: 10000
+  rotateAnglePerSecond: 90
+  turretRotateAnglePerSecond: 150
+  gunRaiseAnglePerSecond: 150
 --- !u!54 &2043939531
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -25685,8 +25678,8 @@ MonoBehaviour:
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
-  m_HorizontalDamping: 0.5
-  m_VerticalDamping: 0.5
+  m_HorizontalDamping: 0
+  m_VerticalDamping: 0
   m_ScreenX: 0.5
   m_ScreenY: 0.5
   m_DeadZoneWidth: 0
@@ -27876,21 +27869,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99a322a8392fe7445b4ebeade845dd8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reloadDuration: 3
   bombPool: {fileID: 1001378783}
   healthPointBar: {fileID: 1108465415}
   headLights:
   - {fileID: 1058461303}
   - {fileID: 161747469}
+  reloadDuration: 3
   maxCooldown: 0.3
   maxBombCount: 10
   maxHealthPoint: 100
   bombForce: 5000
-  wheelForce: 10000
-  rotateSensitivity: 0.3
-  turretRotateSensitivity: 0.5
-  turret: {fileID: 0}
-  gun: {fileID: 0}
+  wheelForcePerSecond: 10000
+  rotateAnglePerSecond: 90
+  turretRotateAnglePerSecond: 150
+  gunRaiseAnglePerSecond: 150
 --- !u!54 &3922232740102827896
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -27924,6 +27916,8 @@ MonoBehaviour:
   taskProgress: {fileID: 671284707}
   aimPoint: {fileID: 948555691}
   cameraSwitcher: {fileID: 1611792446}
+  rotateSensitivity: 0.5
+  turretRotateSensitivity: 0.5
 --- !u!1 &3922243940225100764
 GameObject:
   m_ObjectHideFlags: 0

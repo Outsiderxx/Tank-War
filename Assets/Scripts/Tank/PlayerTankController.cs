@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class PlayerTankController : TankController
 {
@@ -7,6 +8,10 @@ public class PlayerTankController : TankController
     [SerializeField] private Text taskMessage;
     [SerializeField] private Slider taskProgress;
     [SerializeField] private GameObject aimPoint;
+    [SerializeField] private CameraSwitcher cameraSwitcher;
+    [SerializeField] private float rotateSensitivity = 0.5f;
+    [SerializeField] private float turretRotateSensitivity = 0.5f;
+
 
     protected override void Awake()
     {
@@ -20,11 +25,25 @@ public class PlayerTankController : TankController
     void Update()
     {
         this.aimPoint.SetActive(Input.GetMouseButton(1));
-        this.tank.UpdateTurretRotationValue(Input.GetAxis("Mouse X"));
-        this.tank.UpdateGunRaiseAngleValue(Input.GetAxis("Mouse Y"));
+        this.tank.UpdateTurretRotateAngleRatio(Input.GetAxis("Mouse X"));
+        this.tank.UpdateGunRaiseAngleRatio(Input.GetAxis("Mouse Y"));
+        if (Input.GetKeyUp(KeyCode.Q))
+        {
+            this.tank.ToggleHeadLight();
+        }
+
+        if (this.tank.isAlive && Input.GetMouseButton(1))
+        {
+            this.cameraSwitcher.DisplayInFirstPerson();
+        }
+        else
+        {
+            this.cameraSwitcher.DisplayInThirdPerson();
+        }
 
         if (this.tank.isAlive)
         {
+            this.DecideAction(this.GetSurroundingBrokenTank());
 
             // fire bomb
             if (Input.GetMouseButtonUp(0))
@@ -37,20 +56,17 @@ public class PlayerTankController : TankController
                 this.tank.ReloadBomb();
             }
 
-            if (Input.GetKeyUp(KeyCode.Q))
-            {
-                this.tank.ToggleHeadLight();
-            }
 
-            this.tank.UpdateMovementValue(Input.GetAxis("Vertical"));
-            this.tank.UpdateRotationValue(Input.GetAxis("Horizontal"));
+
+            this.tank.UpdateMoveSpeedRatio(Input.GetAxis("Vertical") * this.turretRotateSensitivity);
+            this.tank.UpdateRotationAngleRatio(Input.GetAxis("Horizontal") * this.rotateSensitivity);
         }
 
         if (this.tank.isAlive && this.tank.reloadLeftTime > 0)
         {
             this.taskProgress.gameObject.SetActive(true);
             this.taskMessage.gameObject.SetActive(true);
-            this.DisplayTaskProgress((this.tank.reloadDuration - this.tank.reloadLeftTime) / this.tank.reloadDuration, "裝彈中...");
+            this.DisplayReloadProgress((this.tank.reloadDuration - this.tank.reloadLeftTime) / this.tank.reloadDuration, "裝彈中...");
         }
         else
         {
@@ -59,9 +75,31 @@ public class PlayerTankController : TankController
         }
     }
 
-    private void DisplayTaskProgress(float progress, string message)
+    private void DisplayReloadProgress(float progress, string message)
     {
         this.taskMessage.text = message;
         this.taskProgress.value = progress;
+    }
+
+    private void DecideAction(Tank[] brokenTanks)
+    {
+        foreach (Tank tank in brokenTanks)
+        {
+            if (tank.IsEnemy(this.tank))
+            {
+                tank.Kill();
+            }
+            else
+            {
+                tank.Rescue();
+            }
+        }
+    }
+
+    private Tank[] GetSurroundingBrokenTank()
+    {
+        Collider[] colliders = Physics.OverlapSphere(this.transform.position, 20);
+        Collider[] tankColliders = colliders.Where(collider => collider.gameObject.layer == AITankerController.TANK_LAYER).ToArray();
+        return colliders.Select(collider => collider.GetComponentInParent<Tank>()).Where(tank => tank && tank.state == TankState.Broken).ToArray();
     }
 }

@@ -34,6 +34,8 @@ public class AITankerController : TankController
 
     void Update()
     {
+        this.tank.UpdateTurretRotateAngleRatio(0);
+        this.tank.UpdateGunRaiseAngleRatio(0);
         if (this.tank.isAlive)
         {
             this.DecideAction(this.GetSurroundingTank());
@@ -87,21 +89,18 @@ public class AITankerController : TankController
         {
             if (!this.tank.IsEnemy(tank))
             {
-                print("rescue");
                 this.RescueAlly(tank);
                 haveActionToDo = true;
                 break;
             }
             if (tank.state == TankState.Broken)
             {
-                print("kill enemy");
                 this.killEnemy(tank);
                 haveActionToDo = true;
                 break;
             }
             else if (this.tank.reloadLeftTime == 0)
             {
-                print("attack enemy");
                 this.AttackEnemy(tank);
                 haveActionToDo = true;
                 break;
@@ -119,7 +118,6 @@ public class AITankerController : TankController
         {
             if (this.reloadPosition == null)
             {
-                print("get new reload position");
                 Vector3 reloadPosition = this.transform.position;
                 int length = 100;
                 float randomDegree = Random.Range(0, 360);
@@ -127,11 +125,9 @@ public class AITankerController : TankController
                 reloadPosition.z += Mathf.Sin(Mathf.Deg2Rad * randomDegree) * length;
                 this.reloadPosition = reloadPosition;
             }
-            print("move to reload position");
             this.MoveTo((Vector3)this.reloadPosition);
             return;
         }
-        print("move to next target");
         if (this.checkDelayFrame == 0 && this.CheckIfIsArriveTargetPoint())
         {
             if (this.currentPointIndex == 0 && this.pathDirection)
@@ -178,12 +174,14 @@ public class AITankerController : TankController
     {
         // calculate distance
         float distance = Vector3.Distance(this.transform.position, enemy.transform.position);
-        if (distance < 100)
+        if (distance < this.detectRadius)
         {
             // adjust turret and gun angle
-            this.AimToTarget(enemy);
-            this.agent.isStopped = true;
-            this.tank.FireBomb();
+            if (this.AimToTarget(enemy))
+            {
+                this.agent.isStopped = true;
+                this.tank.FireBomb();
+            };
         }
         else
         {
@@ -191,18 +189,31 @@ public class AITankerController : TankController
         }
     }
 
-    private void AimToTarget(Tank tank)
+    private bool AimToTarget(Tank tank)
     {
+        bool canFire = true;
         // adjust turret orientation
-        Vector3 newLocalEulerAngles = this.tank.turret.localEulerAngles;
+        float targetTurretLocalEulerAngleY;
         Vector3 directionVector = tank.turret.position - this.tank.turret.position;
-        newLocalEulerAngles.y = -Vector3.SignedAngle(directionVector, Vector3.forward, Vector3.up) - this.tank.transform.localEulerAngles.y + Random.Range(-5, 5);
-        this.tank.turret.localEulerAngles = newLocalEulerAngles;
+        targetTurretLocalEulerAngleY = -Vector3.SignedAngle(directionVector, Vector3.forward, Vector3.up) - this.tank.transform.localEulerAngles.y;
+        float deltaAngle = Mathf.DeltaAngle(this.tank.turret.localEulerAngles.y, targetTurretLocalEulerAngleY);
+        if (Mathf.Abs(deltaAngle) > 5)
+        {
+            this.tank.UpdateTurretRotateAngleRatio(deltaAngle < 0 ? -1 : 1);
+            canFire = false;
+        }
 
+        // adjust gun raise angle
         float distance = Vector3.Distance(tank.transform.position, this.tank.transform.position);
-        Vector2 newGunEulerAngles = this.tank.gun.localEulerAngles;
-        newGunEulerAngles.x = Mathf.Max(-30, (-30) * Mathf.Max(distance - 75, 0) / 100 + Random.Range(-5, 5));
-        this.tank.gun.localEulerAngles = newGunEulerAngles;
+        float targetGunEulerAngleX = this.tank.gun.localEulerAngles.y;
+        targetGunEulerAngleX = Mathf.Clamp(-30 * Mathf.Max(distance - 115, 0) / 100 + Random.Range(-3, 3), -30, 0);
+        deltaAngle = Mathf.DeltaAngle(this.tank.gun.localEulerAngles.x, targetGunEulerAngleX);
+        if (Mathf.Abs(deltaAngle) > 3)
+        {
+            this.tank.UpdateGunRaiseAngleRatio(deltaAngle < 0 ? 1 : -1);
+            canFire = false;
+        }
+        return canFire;
     }
 
     private void killEnemy(Tank enemy)
@@ -231,4 +242,6 @@ public class AITankerController : TankController
         }
         return false;
     }
+
+
 }

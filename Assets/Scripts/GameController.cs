@@ -19,7 +19,6 @@ public class GameController : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.Locked;
         };
-        Cursor.lockState = CursorLockMode.Locked;
         foreach (Tank tank in this.allyTanks)
         {
             tank.onStateChanged += this.CheckGameResult;
@@ -28,6 +27,7 @@ public class GameController : MonoBehaviour
         {
             tank.onStateChanged += this.CheckGameResult;
         }
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()

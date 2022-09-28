@@ -11,27 +11,32 @@ public enum TankState
 
 public class Tank : MonoBehaviour
 {
-    public float reloadDuration = 3;
+    // object
     [SerializeField] private GameObjectPool bombPool;
     [SerializeField] private Slider healthPointBar;
     [SerializeField] private Light[] headLights;
+    public Transform turret { get; private set; }
+    public Transform gun { get; private set; }
+    private Transform bombSpawnAt;
+    private List<WheelCollider> wheels = new List<WheelCollider>();
+    private List<Transform> wheelMeshes = new List<Transform>();
+
+    // setting
+    public float reloadDuration = 3;
     [SerializeField] private float maxCooldown = 0.3f;
     [SerializeField] private int maxBombCount = 10;
     [SerializeField] private int maxHealthPoint = 100;
     [SerializeField] private float bombForce = 100;
-    [SerializeField] private float wheelForce = 10000;
-    [SerializeField] private float rotateSensitivity = 0.5f;
-    [SerializeField] private float turretRotateSensitivity = 0.5f;
+    [SerializeField] private float wheelForcePerSecond = 10000;
+    [SerializeField] private float rotateAnglePerSecond;
+    [SerializeField] private float turretRotateAnglePerSecond;
+    [SerializeField] private float gunRaiseAnglePerSecond;
 
-    public Transform turret;
-    public Transform gun;
-    private Transform bombSpawnAt;
-    private List<WheelCollider> wheels = new List<WheelCollider>();
-    private List<Transform> wheelMeshes = new List<Transform>();
-    private float movementValue = 0;
-    private float rotationValue = 0;
-    private float gunRaiseAngleValue = 0;
-    private float turretRotationValue = 0;
+    // current state
+    private float moveSpeedRatio = 0; // -1 ~ 1
+    private float rotateAngleRatio = 0; // -1 ~ 1
+    private float turretRotateAngleRatio = 0; // -1 ~ 1
+    private float gunRaiseAngleRatio = 0; // -1 ~ 1
     private float currentGunRaiseAngle = 0;
     private float currentCooldown = 0;
     private int _currentBombCount = 10;
@@ -102,23 +107,20 @@ public class Tank : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.B))
-        {
-            this.Break();
-        }
         // rotate tank orientation
         float oldEulerAngleY = this.transform.eulerAngles.y;
         Vector3 newEulerAngles = Vector3.zero;
-        newEulerAngles.y = (this.transform.eulerAngles.y + this.rotationValue * this.rotateSensitivity) % 360;
+        newEulerAngles.y = (this.transform.eulerAngles.y + (this.rotateAngleRatio * this.rotateAnglePerSecond * Time.deltaTime)) % 360;
         this.transform.eulerAngles = newEulerAngles;
 
         // direction of turret do not affect by the direction of tank
         Vector3 newTurretEulerAngles = this.turret.localEulerAngles;
-        newTurretEulerAngles.y = (this.turret.localEulerAngles.y + this.turretRotationValue * this.turretRotateSensitivity + (oldEulerAngleY - this.transform.eulerAngles.y)) % 360;
+        float tankAngleDiff = oldEulerAngleY - newEulerAngles.y;
+        newTurretEulerAngles.y = (this.turret.localEulerAngles.y + (this.turretRotateAngleRatio * this.turretRotateAnglePerSecond * Time.deltaTime) + tankAngleDiff) % 360;
         this.turret.localEulerAngles = newTurretEulerAngles;
 
         // raise gun
-        this.currentGunRaiseAngle = Mathf.Clamp((this.currentGunRaiseAngle - this.gunRaiseAngleValue), -30, 0);
+        this.currentGunRaiseAngle = Mathf.Clamp((this.currentGunRaiseAngle - (this.gunRaiseAngleRatio * this.gunRaiseAnglePerSecond * Time.deltaTime)), -30, 0);
         this.gun.localRotation = Quaternion.AngleAxis(this.currentGunRaiseAngle, Vector3.right);
 
         // reduce cooldown
@@ -153,15 +155,15 @@ public class Tank : MonoBehaviour
 
         this.wheels.ForEach((wheel) =>
         {
-            if (this.movementValue == 0)
+            if (this.moveSpeedRatio == 0)
             {
                 wheel.motorTorque = 0;
-                wheel.brakeTorque = this.wheelForce * Time.fixedDeltaTime;
+                wheel.brakeTorque = this.wheelForcePerSecond * Time.fixedDeltaTime;
             }
             else
             {
                 wheel.brakeTorque = 0;
-                wheel.motorTorque = this.movementValue * this.wheelForce * Time.fixedDeltaTime;
+                wheel.motorTorque = this.moveSpeedRatio * Time.fixedDeltaTime * this.wheelForcePerSecond;
             }
         });
     }
@@ -171,24 +173,24 @@ public class Tank : MonoBehaviour
         return this.tag != tank.tag;
     }
 
-    public void UpdateMovementValue(float value)
+    public void UpdateMoveSpeedRatio(float value)
     {
-        this.movementValue = value;
+        this.moveSpeedRatio = Mathf.Clamp(value, -1, 1);
     }
 
-    public void UpdateRotationValue(float value)
+    public void UpdateRotationAngleRatio(float value)
     {
-        this.rotationValue = value;
+        this.rotateAngleRatio = Mathf.Clamp(value, -1, 1);
     }
 
-    public void UpdateTurretRotationValue(float value)
+    public void UpdateTurretRotateAngleRatio(float value)
     {
-        this.turretRotationValue = value;
+        this.turretRotateAngleRatio = Mathf.Clamp(value, -1, 1);
     }
 
-    public void UpdateGunRaiseAngleValue(float value)
+    public void UpdateGunRaiseAngleRatio(float value)
     {
-        this.gunRaiseAngleValue = value;
+        this.gunRaiseAngleRatio = Mathf.Clamp(value, -1, 1);
     }
 
     public void ToggleHeadLight()
@@ -259,8 +261,8 @@ public class Tank : MonoBehaviour
     {
         this.state = this.hasBrokenBefore ? TankState.Dead : TankState.Broken;
         this.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        this.movementValue = 0;
-        this.rotationValue = 0;
+        this.moveSpeedRatio = 0;
+        this.rotateAngleRatio = 0;
         this.wheels.ForEach(wheel => wheel.brakeTorque = float.MaxValue);
         this.onStateChanged?.Invoke();
     }
