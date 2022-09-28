@@ -4,10 +4,17 @@ using Cinemachine;
 public class CameraSwitcher : MonoBehaviour
 {
     [SerializeField] private CinemachineVirtualCamera firstPersonCamera;
+    [SerializeField] private CinemachineVirtualCamera thirdPersonCamera;
 
-    // Update is called once per frame
-    void Update()
+    public void DisplayInFirstPerson()
     {
-        this.firstPersonCamera.Priority = Input.GetMouseButton(1) ? 11 : 9;
+        this.firstPersonCamera.Priority = 1;
+        this.thirdPersonCamera.Priority = 0;
+    }
+
+    public void DisplayInThirdPerson()
+    {
+        this.thirdPersonCamera.Priority = 1;
+        this.firstPersonCamera.Priority = 0;
     }
 }

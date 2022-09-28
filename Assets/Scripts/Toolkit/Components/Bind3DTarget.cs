@@ -6,8 +6,7 @@ public class Bind3DTarget : MonoBehaviour
 {
     [SerializeField] private Transform target;
 
-    // Update is called once per frame
-    void Update()
+    private void LateUpdate()
     {
         this.transform.position = Camera.main.WorldToScreenPoint(this.target.position);
     }

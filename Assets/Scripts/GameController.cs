@@ -1,22 +1,62 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class GameController : MonoBehaviour
 {
-    private void Start()
+    [SerializeField] private Page menu;
+    [SerializeField] private ResultPage resultPage;
+    [SerializeField] private Tank[] allyTanks;
+    [SerializeField] private Tank[] enemyTanks;
+
+    private void Awake()
     {
+        menu.OnOpen += () =>
+        {
+            Cursor.lockState = CursorLockMode.None;
+        };
+        menu.OnClose += () =>
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        };
         Cursor.lockState = CursorLockMode.Locked;
+        foreach (Tank tank in this.allyTanks)
+        {
+            tank.onStateChanged += this.CheckGameResult;
+        }
+        foreach (Tank tank in this.enemyTanks)
+        {
+            tank.onStateChanged += this.CheckGameResult;
+        }
     }
 
-    private void Update()
+    void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyUp(KeyCode.Escape))
         {
-            Cursor.lockState = Cursor.lockState == CursorLockMode.None ? CursorLockMode.Locked : CursorLockMode.None;
+            this.menu.Open();
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+    public void BackToMainPage()
+    {
+        SceneManager.LoadScene("Main");
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene("Game");
+    }
+
+    private void CheckGameResult()
+    {
+        if (this.allyTanks.All(tank => !tank.isAlive))
         {
-            Application.Quit();
+            this.resultPage.DisplayResult(false);
+        }
+        else if (this.enemyTanks.All(tank => !tank.isAlive))
+        {
+            this.resultPage.DisplayResult(true);
         }
     }
 }
