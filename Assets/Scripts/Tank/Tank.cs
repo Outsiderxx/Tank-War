@@ -265,8 +265,9 @@ public class Tank : MonoBehaviour
         {
             return;
         }
-        this.state = TankState.Dead;
         this.healthPointBar.gameObject.SetActive(false);
+        this.state = TankState.Dead;
+        this.onStateChanged?.Invoke();
     }
 
     public void Rescue()
@@ -287,6 +288,7 @@ public class Tank : MonoBehaviour
         this.state = this.hasBrokenBefore ? TankState.Dead : TankState.Broken;
         if (!this.hasBrokenBefore)
         {
+            this.healthPointBar.gameObject.SetActive(false);
             this.hasBrokenBefore = true;
         }
         this.GetComponent<Rigidbody>().velocity = Vector3.zero;

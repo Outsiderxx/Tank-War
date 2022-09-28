@@ -28,6 +28,6 @@ public class MainPageController : MonoBehaviour
 
     public void ExitGame()
     {
-        Application.Quit();
+        Scheduler.ScheduleOnce(() => Application.Quit(), 0.5f);
     }
 }

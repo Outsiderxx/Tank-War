@@ -62,11 +62,6 @@ public class AudioManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Start()
-    {
-        this.MusicVolume = 0.3f;
-    }
-
     public void PlayEffect(string clipName)
     {
         AudioSource audioSource = this.audioSources.FirstOrDefault(audioSource => !audioSource.isPlaying) ?? this.SpawnAudioSource();

@@ -32,9 +32,16 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Escape))
+        if (!this.resultPage.isOpen && Input.GetKeyUp(KeyCode.Escape))
         {
-            this.menu.Open();
+            if (this.menu.IsOpen)
+            {
+                this.menu.Close();
+            }
+            else
+            {
+                this.menu.Open();
+            }
         }
     }
 
