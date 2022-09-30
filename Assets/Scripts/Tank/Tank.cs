@@ -288,8 +288,11 @@ public class Tank : MonoBehaviour
         this.state = this.hasBrokenBefore ? TankState.Dead : TankState.Broken;
         if (!this.hasBrokenBefore)
         {
-            this.healthPointBar.gameObject.SetActive(false);
             this.hasBrokenBefore = true;
+        }
+        else
+        {
+            this.healthPointBar.gameObject.SetActive(false);
         }
         this.GetComponent<Rigidbody>().velocity = Vector3.zero;
         this.moveSpeedRatio = 0;
